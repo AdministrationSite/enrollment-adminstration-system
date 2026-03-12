@@ -7,7 +7,8 @@
 <style>
 
 body{
-font-family:Arial;
+font-family:Calibri, Arial, sans-serif;
+font-weight:bold;
 background:#f4f6f9;
 margin:0;
 }
@@ -160,6 +161,7 @@ margin-left:-25px;
 <th>Week</th>
 <th>Year</th>
 <th>Email</th>
+<th>Date Issued & Timestamp</th>
 <th>Action</th>
 </tr>
 
@@ -182,6 +184,7 @@ alert("Access Denied");
 window.location="index.html";
 }*/
 
+
 function togglePassword(id){
 
 let p=document.getElementById(id);
@@ -192,7 +195,7 @@ p.type=p.type==="password"?"text":"password";
 
 function validEmail(email){
 
-let pattern=/^[^\s@]+@(gmail\.com)$/;
+let pattern=/^[^\s@]+\.syrmin6@gmail\.com$/;
 
 return pattern.test(email);
 
@@ -203,6 +206,19 @@ return pattern.test(email);
 
 window.onload=function(){
 
+sessionStorage.removeItem("adminLogin");
+
+let savedEmail=localStorage.getItem("adminEmail");
+let savedPass=localStorage.getItem("adminPass");
+
+if(savedEmail){
+document.getElementById("loginEmail").value=savedEmail;
+}
+
+if(savedPass){
+document.getElementById("loginPassword").value=savedPass;
+}
+
 if(sessionStorage.getItem("adminLogin")=="true"){
 
 document.getElementById("loginPage").style.display="none";
@@ -211,10 +227,11 @@ document.getElementById("adminPanel").classList.remove("hidden");
 loadDropdowns();
 loadTable();
 
-}
+startLogoutTimer();
 
 }
 
+}
 
 /* SIGNUP */
 
@@ -225,7 +242,7 @@ let pass=document.getElementById("signupPassword").value;
 
 if(!validEmail(email)){
 
-alert("Enter valid email");
+alert("Admin email must end with 96user@gmail.com");
 return;
 
 }
@@ -260,6 +277,8 @@ return;
 }
 
 sessionStorage.setItem("adminLogin","true");
+localStorage.setItem("adminEmail",email);
+localStorage.setItem("adminPass",pass);
 
 document.getElementById("loginPage").style.display="none";
 document.getElementById("adminPanel").classList.remove("hidden");
@@ -371,14 +390,35 @@ let time=document.getElementById("stime").value;
 let week=document.getElementById("sweek").value;
 let year=document.getElementById("syear").value;
 let email=document.getElementById("semail").value;
+
 let enrollments=JSON.parse(localStorage.getItem("enrollments"))||[];
 
-enrollments.push({code,name,room,time,week,year,email});
+/* GET DATE + TIME */
+let now=new Date();
+
+let date = now.toLocaleDateString("en-US",{
+month:"long",
+day:"numeric",
+year:"numeric"
+});
+
+let timeFormat = now.toLocaleTimeString("en-US",{
+hour:"numeric",
+minute:"2-digit",
+second:"2-digit",
+hour12:true
+});
+
+let timestamp = date + " | " + timeFormat;
+
+enrollments.push({
+code,name,room,time,week,year,email,
+timestamp
+});
 
 localStorage.setItem("enrollments",JSON.stringify(enrollments));
 
 loadTable();
-
 }
 
 
@@ -404,6 +444,7 @@ table.innerHTML+=`
 <td>${e.week}</td>
 <td>${e.year}</td>
 <td>${e.email}</td>
+<td>${e.timestamp}</td>
 
 <td>
 <button onclick="sendEmail(${index})">Send</button>

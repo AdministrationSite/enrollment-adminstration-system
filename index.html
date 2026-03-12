@@ -193,14 +193,21 @@ p.type=p.type==="password"?"text":"password";
 
 }
 
-function validEmail(email){
+function validAdminEmail(email){
 
-let pattern=/^[^\s@]+96user@gmail\.com$/;
+let pattern=/^[a-zA-Z0-9._%+-]+96user@gmail\.com$/;
 
 return pattern.test(email);
 
 }
 
+function validStudentEmail(email){
+
+let pattern=/^[a-zA-Z0-9._%+-]+\.syrmin6@gmail\.com$/;
+
+return pattern.test(email);
+
+}
 
 /* SESSION CHECK */
 
@@ -240,11 +247,9 @@ function signup(){
 let email=document.getElementById("signupEmail").value;
 let pass=document.getElementById("signupPassword").value;
 
-if(!validEmail(email)){
-
+if(!validAdminEmail(email)){
 alert("Admin email must end with 96user@gmail.com");
 return;
-
 }
 
 let users=JSON.parse(localStorage.getItem("adminUsers"))||[];
@@ -301,8 +306,8 @@ let week=document.getElementById("week").value;
 let year=document.getElementById("year").value;
 let email=document.getElementById("email").value;
 
-if(!validEmail(email)){
-alert("Student email invalid");
+if(!validStudentEmail(email)){
+alert("Student email must end with .syrmin6@gmail.com");
 return;
 }
 
